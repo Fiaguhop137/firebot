@@ -64,7 +64,10 @@ def chapterRun(chapter):
                     print("It shimmers enchantingly purple.")
                     violets+=1
                 elif flower=='Clover':
-                    print("You are slightly disappointed, but then you notice it has 4 leaves.")
+                    if random.choice(["Clover","NOT"])=="Clover":
+                        print("You are slightly disappointed, but then you notice it has 4 leaves.")
+                    else:
+                        print("You pick it up, and notice it has 3 leaves. It's pretty.")
                     clovers+=1
                 elif flower=='Daffodil':
                     print("The petals fans out like a yellow star, catching the light.")

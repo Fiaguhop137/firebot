@@ -1,0 +1,34 @@
+import random
+def ask(question, valid_answers):
+    answer=input(question).strip().lower()
+    answer_map={word.lower(): word for word in valid_answers}
+    while answer not in answer_map:
+        answer=input(f"Invalid entry. Please answer with {' or '.join(valid_answers)}. ").strip().lower()
+    return answer_map[answer]
+choice=ask("Would you like random(input 'rolled') or choose(input: 'choose') your powers? ", ["rolled", "choose"])
+power_definitions={ "Fire":"the power of flames and heat. You are able to control and manipulate flames, creating powerful attacks and defenses. You are also immune to fire and heat, allowing you to withstand extreme temperatures. You deal more damage to metal by melting it, but less to earth because it is not flammable. You have more defense towards wood since you can't put out fire by adding fuel, but less protection from water because water can extinguish fire.", "Metal":"the power of strength and durability. You are able to control and manipulate metallic substanced, creating powerful weapons and armor. You are also immune to metal-based attacks such as bullets and blades, allowing you to withstand physical damage. You deal more damage to wood by cutting it, but less to water because water can cause rust. You have more defense towards earth since you are heavier than it, but less protection from fire because fire can melt metal.", "Wood":"the power of growth and nature. You are able to control and manipulate plant life, creating powerful tools and structures. You are also immune to wood-based attacks, allowing you to withstand natural disasters. You deal more damage to earth since tree roots break up, penetrate, and bind soil together, but less to fire since you can't put out fire by adding fuel. You have more defense towards water because you drink water, but less protection from metal because metal can cut wood.", "Earth":"the power of stability and protection. You are able to control and manipulate dirt, stone, and other earth materials, creating powerful barriers and fortifications. You are also immune to earth-based attacks, allowing you to withstand seismic activity. You deal more damage to water by soaking it up, but less to metal because metal is too durable. You have more defense towards fire you are non flammable, but less protection from wood because tree roots break up, penetrate, and bind soil together.", "Water":"the power of fluidity and adaptability. You are able to control and manipulate water and ice, creating powerful waves and currents. You are also immune to water-based attacks, allowing you to withstand flooding. You deal more damage to fire by extinguishing it, but less to wood because wood can absorb water. You have more defense towards metal because it sinks in you, but less protection from earth because earth can absorb the water.", "Light":"the power of illumination and vision. You are able to control and manipulate radiant energy, creating powerful beams and illusions. You are also immune to light-based attacks, allowing you to withstand bright environments. You deal more damage to dark by dispelling it, but take more damage from it as well since it obscures your vision.", "Dark":"the power of negation and mystery. You are able to control and manipulate the absence of light and the shadows themself, creating powerful voids and illusions. You are also immune to dark-based attacks, allowing you to withstand eerie environments. You deal more damage to light by absorbing it, but take more damage to it as well because it blots out your shadows.", "Space":"the power of dimensions and travel. You are able to control and manipulate the fabric of space, creating powerful portals and levitations. You are also immune to space-based attacks, allowing you to withstand vacuum and teleportation. You deal more damage to time by disrupting it, but take more damage from it as well since it is not in the 3 dimensions you exist in.", "Time":"the power of past, present, and future. You are able to control and manipulate the flow of time, creating powerful time loops and see the future. You are also immune to time-based attacks, allowing you to withstand temporal anomalies. You deal more damage to space by disrupting it, but take more damage from it as well since it is not in your domain."}
+powers={"first_powers":["Fire","Metal","Wood","Earth","Water"],"second_powers": ["Light", "Dark"],"third_powers": ["Space", "Time"]}
+if("rolled" in choice):
+    first_power=random.choice(powers["first_powers"])
+    second_power=random.choice(powers["second_powers"])
+    third_power=random.choice(powers["third_powers"])
+    know_more=ask(f"Your powers are: {first_power}, {second_power}, and {third_power}. \nWould you like to know more about your powers? (yes or no) ", ["yes", "no"])
+    if know_more == "yes":
+        print(f"{first_power} is {power_definitions[first_power]} \n{second_power} is {power_definitions[second_power]} \n{third_power} is {power_definitions[third_power]} \n")
+elif("choose" in choice):
+    first_power=ask(f"First, choose your first power. It can be either Fire, Metal, Wood, Earth, or Water. Each of these powers has its own strengths and weaknesses. If you'd like to know more about any of them, just ask!(tell me more) ", ["Fire","Metal","Wood","Earth","Water","tell me more"])
+    if first_power == "tell me more":
+        for power in powers["first_powers"]:
+            print(f"{power} is {power_definitions[power]}. \n")
+        first_power=ask("Now, choose your first power. It can be either Fire, Metal, Wood, Earth, or Water. ", powers["first_powers"])
+    second_power=ask(f"Next, choose your second power. It can be either Light or Dark. If you'd like to know more about either of them, just ask!(tell me more) ", ["Light", "Dark", "tell me more"])
+    if second_power == "tell me more":
+        for power in powers["second_powers"]:
+            print(f"{power} is {power_definitions[power]}. \n")
+        second_power=ask("Now, choose your second power. It can be either Light or Dark. ", powers["second_powers"])
+    third_power=ask(f"Finally, choose your third power. It can be either Space or Time. If you'd like to know more about either of them, just ask!(tell me more) ", ["Space", "Time", "tell me more"])
+    if third_power == "tell me more":
+        for power in powers["third_powers"]:
+            print(f"{power} is {power_definitions[power]}. \n")
+        third_power=ask("Now, choose your third power. It can be either Space or Time. ", powers["third_powers"])
+    print(f"Your powers are: {first_power}, {second_power}, and {third_power}.")
