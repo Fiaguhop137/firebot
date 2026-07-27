@@ -32,7 +32,7 @@ def make_svg(code):
     colors=compress_colors(colors)
     total_stripes=sum(count for _,count in colors)
     with open("flag.svg","w") as f:
-        f.write(f'<svg xmlns="http://www.w3.org/2000/svg" 'f'width="{WIDTH}" height="{HEIGHT}">\n')
+        f.write(f'''<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}"><!-- Generated using Fiaguhop137's flag generator -->''')        
         y=0
         for(r,g,b),count in colors:
             height=count*HEIGHT//total_stripes
