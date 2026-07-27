@@ -1,7 +1,7 @@
 import getpass,threading,time,sys
 USERNAME=getpass.getuser()
 CREATOR="Fiaguhop137" # It would be really nice if you didn't change this
-HEIGHT=360
+HEIGHT=5040
 WIDTH=int(HEIGHT*4/3)
 code,last_code="",""
 def terminal_input():
