@@ -10,9 +10,11 @@ using std::cout;
 using std::string;
 using std::vector;
 using std::unordered_map;
-const string BASIC_POWERS[5]={"fire","metal","wood","earth","water"};
-const string ALIGNMENTS[2]={"light","dark"};
-const string COSMIC_POWERS[2]={"space","time"};
+std::random_device rd;
+std::mt19937 gen(rd());
+const vector<string> BASIC_POWERS={"fire","metal","wood","earth","water"};
+const vector<string> ALIGNMENTS={"light","dark"};
+const vector<string> COSMIC_POWERS={"space","time"};
 unordered_map<string,string>POWER_DEFINITIONS={
     {"fire","the power of flames and heat. You are able to control and manipulate flames, creating powerful attacks and defenses. You are also immune to fire and heat, allowing you to withstand extreme temperatures. You deal more damage to metal by melting it, but less to earth because it is not flammable. You have more defense towards wood since you can't put out fire by adding fuel, but less protection from water because water can extinguish fire."},
     {"metal","the power of strength and durability. You are able to control and manipulate metallic substanced, creating powerful weapons and armor. You are also immune to metal-based attacks such as bullets and blades, allowing you to withstand physical damage. You deal more damage to wood by cutting it, but less to water because water can cause rust. You have more defense towards earth since you are heavier than it, but less protection from fire because fire can melt metal."},
@@ -108,31 +110,49 @@ struct Powers {
 };
 struct Player {
     string name=user_input("What would you like to name your character?");
-    bool rand=user_input("Would you like to randomize your character's stats and powers?",{"yes","no"})=="yes";
-    if (rand) {
-        std::uniform_int_distribution<int> dist(0,std::size(BASIC_POWERS)-1);
-        string basic=BASIC_POWERS[dist(gen)];
-        std::uniform_int_distribution<int> dist(0,std::size(ALIGNMENTS)-1);
-        string basic=ALIGNMENTS[dist(gen)];
-        std::uniform_int_distribution<int> dist(0,std::size(COSMIC_POWERS)-1);
-        string basic=COSMIC_POWERS[dist(gen)];
+    Player() {
+        string basic;
+        string alignment;
+        string cosmic;
+        bool rand=user_input("Would you like to randomize your character's stats and powers?",{"yes","no"})=="yes";
+        if (rand) {
+            vector<string> basic_options={"fire","metal","wood","earth","water","fire","metal","wood","earth","water","nexus"};
+            std::uniform_int_distribution<int> basic_dist(0,basic_options.size()-1);
+            basic=basic_options[basic_dist(gen)];
+            vector<string> alignment_options={"light","light","light","light","dark","dark","dark","dark","objectivity"};
+            std::uniform_int_distribution<int> alignment_dist(0,alignment_options.size()-1);
+            alignment=alignment_options[alignment_dist(gen)];
+            vector<string> cosmic_options={"space","space","space","space","space","time","time","time","time","time","axiom"};
+            std::uniform_int_distribution<int> cosmic_dist(0,cosmic_options.size()-1);
+            cosmic=cosmic_options[cosmic_dist(gen)];
+        }else{
+            basic=user_input("What would you like your character's basic power to be?",BASIC_POWERS);
+            alignment=user_input("What would you like your character's alignment to be?",ALIGNMENTS);
+            cosmic=user_input("What would you like your character's cosmic power to be?",COSMIC_POWERS);
+        }
+        if (basic=="fire") {
+            known_moves={"flame_burst"};
+        } else if (basic=="metal") {
+            known_moves={"iron_spike"};
+        } else if (basic=="wood") {
+            known_moves={"splinter"};
+        } else if (basic=="earth") {
+            known_moves={"pebble_shot"};
+        } else {
+            known_moves={"water_jet"};
+        }
+        unordered_map<string,int>cooldown_times={};
+        vector<string> pets;
+        int rare_traits=0;
+        if (basic=="nexus"){rare_traits++;}
+        if (basic=="objectivity"){rare_traits++;}
+        if (basic=="axiom"){rare_traits++;}
     }
-        basic=random.choice(BASIC_POWERS*2+["nexus"])
-        alignment=random.choice(ALIGNMENTS*4+["objectivity"])
-        cosmic=random.choice(COSMIC_POWERS*5+["axiom"])
-    else:
-        basic=user_input("What would you like your character's basic power to be?",BASIC_POWERS).lower()
-        alignment=user_input("What would you like your character's alignment to be?",ALIGNMENTS).lower()
-        cosmic=user_input("What would you like your character's cosmic power to be?",COSMIC_POWERS).lower()
-    self.stats=stats(10,20,10,100)
-    self.powers=powers(basic,alignment,cosmic)
-    self.known_moves=["flame_burst"if basic=="fire"else"iron_spike"if basic=="metal"else"splinter"if basic=="wood"else"pebble_shot"if basic=="earth"else"water_jet"]
-    self.cooldown_times={}
-    self.pets=[]
-    self.rare_traits=((self.powers.basic=="nexus")+(self.powers.alignment=="objectivity")+(self.powers.cosmic=="axiom"))
-}
+    Stats stats{10,20,10,100};
+    Powers powers{basic,alignment,cosmic};
+    vector<string> known_moves;
+};
 int main() {
-    string power=user_input("What is your power?",{"fire","metal","wood","earth","water"});
-    cout<<power<<"\n";
+    Player player;
     return 0;
 }
