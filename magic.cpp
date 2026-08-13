@@ -153,7 +153,7 @@ struct player {
         if(index<alignment_starter_moves.size()){known_moves.push_back(alignment_starter_moves[index]);} 
         else{known_moves.insert(known_moves.end(),alignment_starter_moves.begin(),alignment_starter_moves.end());}
         std::vector<std::string> cosmic_starter_moves={"space_rift", "chronic_chakram"};
-        auto cosmic_it=std::find(COSMIC_POWERS.begin(),COSMIC_POWERS.end(),powers.alignment);
+        auto cosmic_it=std::find(COSMIC_POWERS.begin(),COSMIC_POWERS.end(),powers.cosmic);
         index=cosmic_it-COSMIC_POWERS.begin();
         if(index<cosmic_starter_moves.size()){known_moves.push_back(cosmic_starter_moves[index]);} 
         else{known_moves.insert(known_moves.end(),cosmic_starter_moves.begin(),cosmic_starter_moves.end());}
@@ -211,13 +211,15 @@ bool battle_loop(bool turn,player& player){
         string action="see moves";
         while(action=="see moves"){
             action=user_input(string("You have "+std::to_string(player.stats.attack)+" ATK, "+std::to_string(player.stats.speed)+" SPD, "+std::to_string(player.stats.defense)+" DFN, "+std::to_string(player.stats.health)+" HLT\nWhat would you like to do?"),{"use move", "see moves"});
+            vector<string> available_moves;
+            for(size_t i=0;i<player.known_moves.size();++i){if (player.cooldown_times.find(player.known_moves[i])==player.cooldown_times.end()){available_moves.push_back(player.known_moves[i]);}}
             if(action=="see moves"){
-                cout<<"You can use ";
-                for (size_t i=0;i<player.known_moves.size();++i){
-                    cout<<MOVES.at(player.known_moves[i]).name;
-                    if(i+2<player.known_moves.size()){cout<<", ";}
-                    else if(i+1<player.known_moves.size()){cout<<" or ";}
-                    else{cout << ".\n";}
+                cout<<"You can use the following moves: \n";
+                for (size_t i=0;i<available_moves.size();++i){
+                    string cooldown;
+                    if(MOVES.at(available_moves[i]).cooldown==1){cooldown="no";}
+                    else{cooldown=std::to_string(MOVES.at(available_moves[i]).cooldown-1)+"-turn";}
+                    cout<<MOVES.at(available_moves[i]).name<<": "<<MOVES.at(available_moves[i]).damage<<" damage, "<<cooldown<<" cooldown \n";
                 }
             }else{
                 //use moves
