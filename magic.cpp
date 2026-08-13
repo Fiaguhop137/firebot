@@ -82,7 +82,7 @@ string user_input(string prompt,vector<string>valid_options={}) {
             }
             cout<<" or "<<valid_options.back()<<") ";
         }
-        cin>>response;
+        std::getline(cin, response);
         if(!valid_options.empty()&&find(valid_options.begin(),valid_options.end(),response)==valid_options.end()){
             cout<<"Invalid input. Please choose ";
             for(size_t i=0;i<valid_options.size()-1;i++) {
@@ -97,16 +97,24 @@ string user_input(string prompt,vector<string>valid_options={}) {
         }
     }
 }
-struct stats {
+struct stat_block {
     int attack;
     int speed;
     int defense;
     int health;
 };
-struct powers {
+struct power_construct {
     string basic;
     string alignment;
     string cosmic;
+};
+struct enemy {
+    string name;
+    stat_block stats;
+    power_construct powers;
+    vector<string> known_moves;
+    vector<string> pets;
+    unordered_map<string,int>cooldown_times={};
 };
 struct player {
     string name;
@@ -114,8 +122,8 @@ struct player {
     unordered_map<string,int>cooldown_times={};
     vector<string> known_moves;
     vector<string> pets;
-    stats stats{10,20,10,100};
-    powers powers;
+    stat_block stats{10,10,10,100};
+    power_construct powers;
     player() {
         name=user_input("What would you like to name your character?");
         bool randomize=user_input("Would you like to randomize your character's stats and powers?",{"yes","no"})=="yes";
@@ -134,23 +142,90 @@ struct player {
             powers.alignment=user_input("What would you like your character's alignment to be?",ALIGNMENTS);
             powers.cosmic=user_input("What would you like your character's cosmic power to be?",COSMIC_POWERS);
         }
-        if (powers.basic=="fire"){known_moves.push_back("flame_burst");} 
-        else if (powers.basic=="metal"){known_moves.push_back("iron_spike");} 
-        else if (powers.basic=="wood"){known_moves.push_back("splinter");} 
-        else if (powers.basic=="earth"){known_moves.push_back("pebble_shot");} 
-        else if (powers.basic=="water"){known_moves.push_back("water_jet");} 
-        else {vector<string> basic_moves={"flame_burst","iron_spike","splinter","pebble_shot","water_jet"};known_moves.insert(known_moves.end(),basic_moves.begin(),basic_moves.end());}
-        if (powers.alignment=="light"){known_moves.push_back("light_beam");} 
-        else if (powers.alignment=="dark"){known_moves.push_back("void_strike");} 
-        else {vector<string> alignment_moves={"light_beam","void_strike"};known_moves.insert(known_moves.end(),alignment_moves.begin(),alignment_moves.end());}
-        if (powers.cosmic=="space"){known_moves.push_back("space_rift");} 
-        else if (powers.cosmic=="time"){known_moves.push_back("chronic_chakram");} 
-        else {vector<string> cosmic_moves={"space_rift","chronic_chakram"};known_moves.insert(known_moves.end(),cosmic_moves.begin(),cosmic_moves.end());}
+        std::vector<std::string> basic_stater_moves={"flame_burst", "iron_spike", "splinter", "pebble_shot", "water_jet"};
+        auto basic_it=std::find(BASIC_POWERS.begin(),BASIC_POWERS.end(),powers.basic);
+        size_t index=basic_it-BASIC_POWERS.begin();
+        if(index<basic_stater_moves.size()){known_moves.push_back(basic_stater_moves[index]);} 
+        else{known_moves.insert(known_moves.end(),basic_stater_moves.begin(),basic_stater_moves.end());}
+        std::vector<std::string> alignment_starter_moves={"light_beam", "void_strike"};
+        auto alignment_it=std::find(ALIGNMENTS.begin(),ALIGNMENTS.end(),powers.alignment);
+        index=alignment_it-ALIGNMENTS.begin();
+        if(index<alignment_starter_moves.size()){known_moves.push_back(alignment_starter_moves[index]);} 
+        else{known_moves.insert(known_moves.end(),alignment_starter_moves.begin(),alignment_starter_moves.end());}
+        std::vector<std::string> cosmic_starter_moves={"space_rift", "chronic_chakram"};
+        auto cosmic_it=std::find(COSMIC_POWERS.begin(),COSMIC_POWERS.end(),powers.alignment);
+        index=cosmic_it-COSMIC_POWERS.begin();
+        if(index<cosmic_starter_moves.size()){known_moves.push_back(cosmic_starter_moves[index]);} 
+        else{known_moves.insert(known_moves.end(),cosmic_starter_moves.begin(),cosmic_starter_moves.end());}
         if (powers.basic=="nexus"){rare_traits++;}
         if (powers.alignment=="objectivity"){rare_traits++;}
         if (powers.cosmic=="axiom"){rare_traits++;}
     }
 };
+string get_lore(const player&player){
+    string lore="";
+    string basic_power_upper=player.powers.basic;
+    basic_power_upper[0]=std::toupper(static_cast<unsigned char>(basic_power_upper[0]));
+    string alignment_power_upper=player.powers.alignment;
+    alignment_power_upper[0]=std::toupper(static_cast<unsigned char>(alignment_power_upper[0]));
+    string cosmic_power_upper=player.powers.cosmic;
+    cosmic_power_upper[0]=std::toupper(static_cast<unsigned char>(cosmic_power_upper[0]));
+    if(player.rare_traits==0){
+        lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
+        lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
+        lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+    }else if(player.rare_traits==1){
+        if(player.powers.basic=="nexus"){
+            lore+="You are the Nexus. You are a rare convergence of every elemental force, a being born with the power to command fire, metal, wood, earth, water, and forces beyond the natural world. Legends speak of the Nexus as a chosen one destined to appear when the balance of the elements is threatened, wielding powers that no ordinary warrior could ever hope to master. You stand at the center of every elemental conflict, capable of turning the strengths of one element against the weaknesses of another. With such power comes an equally great responsibility, for the fate of the land may rest upon your choices. Whether you become its greatest protector or its greatest threat is yours to decide. \n";
+            lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
+            lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+        }
+        else if(player.powers.alignment=="objectivity"){
+            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
+            lore+="You are Objectivity. You have transcended the opposing forces of light and darkness, standing beyond the endless struggle between them. Where others see good and evil, you see only what is, and your mind is untouched by the illusions and biases that cloud the judgment of ordinary beings. Ancient legends tell of those who achieve Objectivity becoming impartial arbiters of the world, able to perceive truths hidden from even the most powerful beings. You are not bound to light, nor are you consumed by darkness. You exist between them, observing the world with perfect clarity and wielding the power to determine its fate without being swayed by either side. The world may call you a savior, a monster, or something beyond either, but your judgment alone will decide what you become. \n";
+            lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+    }
+        else{
+            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
+            lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
+            lore+="You are the Axiom. You possess a power that exists beyond space, beyond time, and beyond the limits of ordinary reality. While others manipulate the laws of the universe, you possess the ability to perceive and influence the fundamental principles upon which those laws are built. Ancient scholars believed that the Axiom was not merely a being who could control reality, but a living embodiment of the truths that govern existence itself. Space bends, time yields, and the impossible becomes possible in your presence. Yet such power comes with a terrifying realization: if the laws of reality can be changed, then nothing is truly permanent. You have been given the power to rewrite the rules by which the world exists, and whether you use that power to preserve creation, reshape it, or bring about something entirely new is a choice that only you can make. ";
+        }
+    }else if(player.rare_traits==2){
+        if(player.powers.basic=="nexus"){
+            if(player.powers.alignment=="objectivity"){
+                lore+="You are the Nexus of Objectivity. You command every elemental force while remaining untouched by the conflict between light and darkness. You see every element not as opposing forces, but as pieces of a greater whole, allowing you to wield them with unparalleled precision. Those who encounter you speak of a being who cannot be deceived by either side, for you understand the world without judgment and command its elements without limitation. You are not merely the master of the elements. You are the balance between them. \n";
+                lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+            }else{
+                lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
+                lore+="You are the Nexus of Axiom. Every element answers to your will, but your power extends beyond the elements themselves. You perceive the fundamental rules that govern reality and possess the ability to bend them to your purpose. Fire, earth, water, metal, and every force between them become mere expressions of a deeper power that you alone can command. Legends once claimed that no being could master both the elements and the laws of existence, but you have proven those legends wrong. You do not merely control the world. You understand how it works. ";
+            }
+        }else{
+            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
+            lore+="You are the Axiom of Objectivity. You stand beyond the struggle between light and darkness and possess the ability to perceive reality exactly as it is. Your mind is untouched by illusion, bias, or deception, allowing you to comprehend truths that would shatter the minds of ordinary beings. Beyond this perfect perception lies an even greater power: the ability to influence the fundamental laws of reality itself. You do not choose between opposing forces, nor do you obey the rules that bind them. You simply observe the truth, understand it, and decide what the truth should become. ";
+        }
+    }else{lore+="Legend has it that one in a thousand people are born as the Absolute. You are one of them. You possess the power of the Nexus, the clarity of Objectivity, and the authority of the Axiom. Every element lies within your command, neither light nor darkness can sway your judgment, and the fundamental laws of reality are open to your understanding. You are not bound by the forces that govern ordinary beings because you stand above them, able to command the elements, perceive the truth, and reshape reality itself. Ancient civilizations could only speculate about such a being, believing that the convergence of these powers was impossible. Yet you exist, and the world now faces a question that has never had an answer: what does a being with no limits choose to do with them? ";}
+    return lore;
+}
+bool battle_loop(bool turn,player& player){
+    if(turn){
+        string action="see moves";
+        while(action=="see moves"){
+            action=user_input(string("You have "+std::to_string(player.stats.attack)+" ATK, "+std::to_string(player.stats.speed)+" SPD, "+std::to_string(player.stats.defense)+" DFN, "+std::to_string(player.stats.health)+" HLT\nWhat would you like to do?"),{"use move", "see moves"});
+            if(action=="see moves"){
+                cout<<"You can use ";
+                for (size_t i=0;i<player.known_moves.size();++i){
+                    cout<<MOVES.at(player.known_moves[i]).name;
+                    if(i+2<player.known_moves.size()){cout<<", ";}
+                    else if(i+1<player.known_moves.size()){cout<<" or ";}
+                    else{cout << ".\n";}
+                }
+            }else{
+                //use moves
+            }
+        }
+    }
+    return !turn;
+}
 int main() {
     cout<<"Welcome to the game! You are a player in a world of magic and adventure. You will be able to choose your character's stats and powers, and then embark on a journey to defeat the evil forces that threaten the land. \n";
     player player;
@@ -159,11 +234,30 @@ int main() {
     cout<<"Speed: "<<player.stats.speed<<" \n";
     cout<<"Defense: "<<player.stats.defense<<" \n";
     cout<<"Health: "<<player.stats.health<<" \n";
-    if(player.powers.basic!="nexus"){
-        string power_upper;
-        power_upper=player.powers.basic;
-        power_upper[0]=std::toupper(static_cast<unsigned char>(power_upper[0]));
-        cout<<"You have the power of "<<player.powers.basic<<". "<<power_upper<<" is "<<POWER_DEFINITIONS.at(player.powers.basic);
+    cout<<get_lore(player)<<"\n";
+    cout<<"You are now ready to embark on your journey. Good luck, and may the forces of magic be with you! \n";
+    enemy bob{"bob",{10,10,10,100},{},{},{},{}};
+    std::uniform_int_distribution<size_t> basic_dist(0,BASIC_POWERS.size()-1);
+    bob.powers.basic=BASIC_POWERS[basic_dist(gen)];
+    std::uniform_int_distribution<size_t> alignment_dist(0,ALIGNMENTS.size()-1);
+    bob.powers.alignment=ALIGNMENTS[alignment_dist(gen)];
+    std::uniform_int_distribution<size_t> cosmic_dist(0,COSMIC_POWERS.size()-1);
+    bob.powers.cosmic=COSMIC_POWERS[cosmic_dist(gen)];
+    std::bernoulli_distribution randbool(0.5);
+    for (const auto& [id,val]:MOVES) {
+        if(val.type==bob.powers.basic||val.type==bob.powers.alignment||val.type==bob.powers.cosmic){
+            if(randbool(gen)){
+                bob.known_moves.push_back(id);
+            }
+        }
     }
+    if(bob.known_moves.empty()){
+        for (const auto& [id,val]:MOVES) {
+            if(val.type==bob.powers.basic||val.type==bob.powers.alignment||val.type==bob.powers.cosmic){
+                bob.known_moves.push_back(id);
+            }
+        }
+    }
+    battle_loop(true,player);
     return 0;
 }
