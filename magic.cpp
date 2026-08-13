@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <cctype>
 using std::cin;
 using std::cout;
 using std::string;
@@ -25,14 +26,14 @@ const unordered_map<string,string>POWER_DEFINITIONS={
     {"space","the power of dimensions and travel. You are able to control and manipulate the fabric of space, creating powerful portals and levitations. You are also immune to space-based attacks, allowing you to withstand vacuum and teleportation. You deal more damage to time by disrupting it, but take more damage from it as well since it is not in the 3 dimensions you exist in."},
     {"time","the power of past, present, and future. You are able to control and manipulate the flow of time, creating powerful time loops and see the future. You are also immune to time-based attacks, allowing you to withstand temporal anomalies. You deal more damage to space by disrupting it, but take more damage from it as well since it is not in your domain."}
 };
-struct Move {
+struct move {
     string name;
     int damage;
     int cooldown;
     string type;
     string level;
 };
-const unordered_map<string,Move>MOVES={
+const unordered_map<string,move>MOVES={
     {"flame_burst",{"Flame Burst",10,1,"fire","basic"}},
     {"fireball",{"Fireball",13,2,"fire","basic"}},
     {"heat_wave",{"Heat Wave",17,2,"fire","basic"}},
@@ -96,26 +97,26 @@ string user_input(string prompt,vector<string>valid_options={}) {
         }
     }
 }
-struct Stats {
+struct stats {
     int attack;
     int speed;
     int defense;
     int health;
 };
-struct Powers {
+struct powers {
     string basic;
     string alignment;
     string cosmic;
 };
-struct Player {
+struct player {
     string name;
     int rare_traits=0;
     unordered_map<string,int>cooldown_times={};
     vector<string> known_moves;
     vector<string> pets;
-    Stats stats{10,20,10,100};
-    Powers powers;
-    Player() {
+    stats stats{10,20,10,100};
+    powers powers;
+    player() {
         name=user_input("What would you like to name your character?");
         bool randomize=user_input("Would you like to randomize your character's stats and powers?",{"yes","no"})=="yes";
         if (randomize) {
@@ -151,6 +152,18 @@ struct Player {
     }
 };
 int main() {
-    Player player;
+    cout<<"Welcome to the game! You are a player in a world of magic and adventure. You will be able to choose your character's stats and powers, and then embark on a journey to defeat the evil forces that threaten the land. \n";
+    player player;
+    cout<<player.name<<" has been created with the following stats: \n";
+    cout<<"Attack: "<<player.stats.attack<<" \n";
+    cout<<"Speed: "<<player.stats.speed<<" \n";
+    cout<<"Defense: "<<player.stats.defense<<" \n";
+    cout<<"Health: "<<player.stats.health<<" \n";
+    if(player.powers.basic!="nexus"){
+        string power_upper;
+        power_upper=player.powers.basic;
+        power_upper[0]=std::toupper(static_cast<unsigned char>(power_upper[0]));
+        cout<<"You have the power of "<<player.powers.basic<<". "<<power_upper<<" is "<<POWER_DEFINITIONS.at(player.powers.basic);
+    }
     return 0;
 }
