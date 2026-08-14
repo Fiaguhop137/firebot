@@ -15,9 +15,10 @@ using std::vector;
 using std::unordered_map;
 std::random_device rd;
 std::mt19937 gen(rd());
-const vector<string> BASIC_POWERS={"fire","metal","wood","earth","water"};
-const vector<string> ALIGNMENTS={"light","dark"};
-const vector<string> COSMIC_POWERS={"space","time"};
+const vector<string> basic_powers={"fire","metal","wood","earth","water"};
+const vector<string> alignments={"light","dark"};
+const vector<string> cosmic_powers={"space","time"};
+const vector<string> stat_types={"attack", "defense", "speed", "health"};
 unordered_map<string,string>power_definitions;
 struct move {
     string name;
@@ -105,23 +106,23 @@ struct player {
             std::uniform_int_distribution<size_t> cosmic_dist(0,cosmic_options.size()-1);
             powers.cosmic=cosmic_options[cosmic_dist(gen)];
         }else{
-            powers.basic=user_input("What would you like your character's basic power to be?",BASIC_POWERS);
-            powers.alignment=user_input("What would you like your character's alignment to be?",ALIGNMENTS);
-            powers.cosmic=user_input("What would you like your character's cosmic power to be?",COSMIC_POWERS);
+            powers.basic=user_input("What would you like your character's basic power to be?",basic_powers);
+            powers.alignment=user_input("What would you like your character's alignment to be?",alignments);
+            powers.cosmic=user_input("What would you like your character's cosmic power to be?",cosmic_powers);
         }
         std::vector<std::string> basic_stater_moves={"flame_burst", "iron_spike", "splinter", "pebble_shot", "water_jet"};
-        auto basic_it=std::find(BASIC_POWERS.begin(),BASIC_POWERS.end(),powers.basic);
-        size_t index=basic_it-BASIC_POWERS.begin();
+        auto basic_it=std::find(basic_powers.begin(),basic_powers.end(),powers.basic);
+        size_t index=basic_it-basic_powers.begin();
         if(index<basic_stater_moves.size()){known_moves.push_back(basic_stater_moves[index]);} 
         else{known_moves.insert(known_moves.end(),basic_stater_moves.begin(),basic_stater_moves.end());}
         std::vector<std::string> alignment_starter_moves={"light_beam", "void_strike"};
-        auto alignment_it=std::find(ALIGNMENTS.begin(),ALIGNMENTS.end(),powers.alignment);
-        index=alignment_it-ALIGNMENTS.begin();
+        auto alignment_it=std::find(alignments.begin(),alignments.end(),powers.alignment);
+        index=alignment_it-alignments.begin();
         if(index<alignment_starter_moves.size()){known_moves.push_back(alignment_starter_moves[index]);} 
         else{known_moves.insert(known_moves.end(),alignment_starter_moves.begin(),alignment_starter_moves.end());}
         std::vector<std::string> cosmic_starter_moves={"space_rift", "chronic_chakram"};
-        auto cosmic_it=std::find(COSMIC_POWERS.begin(),COSMIC_POWERS.end(),powers.cosmic);
-        index=cosmic_it-COSMIC_POWERS.begin();
+        auto cosmic_it=std::find(cosmic_powers.begin(),cosmic_powers.end(),powers.cosmic);
+        index=cosmic_it-cosmic_powers.begin();
         if(index<cosmic_starter_moves.size()){known_moves.push_back(cosmic_starter_moves[index]);} 
         else{known_moves.insert(known_moves.end(),cosmic_starter_moves.begin(),cosmic_starter_moves.end());}
         if (powers.basic=="nexus"){rare_traits++;}
@@ -230,12 +231,12 @@ int main() {
     cout<<get_lore(player)<<"\n";
     cout<<"You are now ready to embark on your journey. Good luck, and may the forces of magic be with you! \n";
     enemy bob{"bob",{10,10,10,100},{},{},{},{}};
-    std::uniform_int_distribution<size_t> basic_dist(0,BASIC_POWERS.size()-1);
-    bob.powers.basic=BASIC_POWERS[basic_dist(gen)];
-    std::uniform_int_distribution<size_t> alignment_dist(0,ALIGNMENTS.size()-1);
-    bob.powers.alignment=ALIGNMENTS[alignment_dist(gen)];
-    std::uniform_int_distribution<size_t> cosmic_dist(0,COSMIC_POWERS.size()-1);
-    bob.powers.cosmic=COSMIC_POWERS[cosmic_dist(gen)];
+    std::uniform_int_distribution<size_t> basic_dist(0,basic_powers.size()-1);
+    bob.powers.basic=basic_powers[basic_dist(gen)];
+    std::uniform_int_distribution<size_t> alignment_dist(0,alignments.size()-1);
+    bob.powers.alignment=alignments[alignment_dist(gen)];
+    std::uniform_int_distribution<size_t> cosmic_dist(0,cosmic_powers.size()-1);
+    bob.powers.cosmic=cosmic_powers[cosmic_dist(gen)];
     std::bernoulli_distribution randbool(0.5);
     for (const auto& [id,val]:moves) {
         if(val.type==bob.powers.basic||val.type==bob.powers.alignment||val.type==bob.powers.cosmic){

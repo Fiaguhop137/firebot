@@ -105,7 +105,7 @@ def battle_loop(player,enemy,turn):
     if turn==0:
         action="see moves"
         while action=="see moves":    
-            action=user_input(f"You have {player.stats.attack} ATK, {player.stats.speed} SPD, {player.stats.defense} DFN, and {player.stats.health} HLT \nWhat would you like to do?",["use move","see moves"])
+            action=user_input(f"You have {player.stats.attack} ATK, {player.stats.defense} DFN, {player.stats.speed} SPD, and {player.stats.health} HLT \nWhat would you like to do?",["use move","see moves"])
             if action=="use move":
                 available_moves=[move for move in player.known_moves if move not in player.cooldown_times]
                 move_lookup={MOVES[move]["name"]: move for move in available_moves}
