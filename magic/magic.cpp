@@ -18,17 +18,7 @@ std::mt19937 gen(rd());
 const vector<string> BASIC_POWERS={"fire","metal","wood","earth","water"};
 const vector<string> ALIGNMENTS={"light","dark"};
 const vector<string> COSMIC_POWERS={"space","time"};
-const unordered_map<string,string>POWER_DEFINITIONS={
-    {"fire","the power of flames and heat. You are able to control and manipulate flames, creating powerful attacks and defenses. You are also immune to fire and heat, allowing you to withstand extreme temperatures. You deal more damage to metal by melting it, but less to earth because it is not flammable. You have more defense towards wood since you can't put out fire by adding fuel, but less protection from water because water can extinguish fire."},
-    {"metal","the power of strength and durability. You are able to control and manipulate metallic substanced, creating powerful weapons and armor. You are also immune to metal-based attacks such as bullets and blades, allowing you to withstand physical damage. You deal more damage to wood by cutting it, but less to water because water can cause rust. You have more defense towards earth since you are heavier than it, but less protection from fire because fire can melt metal."},
-    {"wood","the power of growth and nature. You are able to control and manipulate plant life, creating powerful tools and structures. You are also immune to wood-based attacks, allowing you to withstand natural disasters. You deal more damage to earth since tree roots break up, penetrate, and bind soil together, but less to fire since you can't put out fire by adding fuel. You have more defense towards water because you drink water, but less protection from metal because metal can cut wood."},
-    {"earth","the power of stability and protection. You are able to control and manipulate dirt, stone, and other earth materials, creating powerful barriers and fortifications. You are also immune to earth-based attacks, allowing you to withstand seismic activity. You deal more damage to water by soaking it up, but less to metal because metal is too durable. You have more defense towards fire you are non flammable, but less protection from wood because tree roots break up, penetrate, and bind soil together."},
-    {"water","the power of fluidity and adaptability. You are able to control and manipulate water and ice, creating powerful waves and currents. You are also immune to water-based attacks, allowing you to withstand flooding. You deal more damage to fire by extinguishing it, but less to wood because wood can absorb water. You have more defense towards metal because it sinks in you, but less protection from earth because earth can absorb the water."},
-    {"light","the power of illumination and vision. You are able to control and manipulate radiant energy, creating powerful beams and illusions. You are also immune to light-based attacks, allowing you to withstand bright environments. You deal more damage to dark by dispelling it, but take more damage from it as well since it obscures your vision."},
-    {"dark","the power of negation and mystery. You are able to control and manipulate the absence of light and the shadows themself, creating powerful voids and illusions. You are also immune to dark-based attacks, allowing you to withstand eerie environments. You deal more damage to light by absorbing it, but take more damage to it as well because it blots out your shadows."},
-    {"space","the power of dimensions and travel. You are able to control and manipulate the fabric of space, creating powerful portals and levitations. You are also immune to space-based attacks, allowing you to withstand vacuum and teleportation. You deal more damage to time by disrupting it, but take more damage from it as well since it is not in the 3 dimensions you exist in."},
-    {"time","the power of past, present, and future. You are able to control and manipulate the flow of time, creating powerful time loops and see the future. You are also immune to time-based attacks, allowing you to withstand temporal anomalies. You deal more damage to space by disrupting it, but take more damage from it as well since it is not in your domain."}
-};
+unordered_map<string,string>power_definitions;
 struct move {
     string name;
     int damage;
@@ -37,10 +27,13 @@ struct move {
     string level;
 };
 unordered_map<string,move>moves;
-void load_moves() {
-    std::ifstream file("magic/assets/data/moves.json");
-    json data=json::parse(file);
-    for (const auto& [id,value]:data.items()){moves[id]={value["name"],value["damage"],value["cooldown"],value["type"],value["level"]};}
+void load_jsons() {
+    std::ifstream moves_file("assets/data/moves.json");
+    json moves_data=json::parse(moves_file);
+    for (const auto& [id,value]:moves_data.items()){moves[id]={value["name"],value["damage"],value["cooldown"],value["type"],value["level"]};}
+    std::ifstream power_definitions_file("assets/data/power_definitions.json");
+    json power_definitions_data=json::parse(power_definitions_file);
+    for (const auto& [id,value]:power_definitions_data.items()){power_definitions[id]=value;}
 }
 string user_input(string prompt,vector<string>valid_options={}) {
     while(true){
@@ -145,36 +138,36 @@ string get_lore(const player&player){
     string cosmic_power_upper=player.powers.cosmic;
     cosmic_power_upper[0]=std::toupper(cosmic_power_upper[0]);
     if(player.rare_traits==0){
-        lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
-        lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
-        lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+        lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+power_definitions.at(player.powers.basic)+" \n";
+        lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+power_definitions.at(player.powers.alignment)+" \n";
+        lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+power_definitions.at(player.powers.cosmic)+" ";
     }else if(player.rare_traits==1){
         if(player.powers.basic=="nexus"){
             lore+="You are the Nexus. You are a rare convergence of every elemental force, a being born with the power to command fire, metal, wood, earth, water, and forces beyond the natural world. Legends speak of the Nexus as a chosen one destined to appear when the balance of the elements is threatened, wielding powers that no ordinary warrior could ever hope to master. You stand at the center of every elemental conflict, capable of turning the strengths of one element against the weaknesses of another. With such power comes an equally great responsibility, for the fate of the land may rest upon your choices. Whether you become its greatest protector or its greatest threat is yours to decide. \n";
-            lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
-            lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+            lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+power_definitions.at(player.powers.alignment)+" \n";
+            lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+power_definitions.at(player.powers.cosmic)+" ";
         }
         else if(player.powers.alignment=="objectivity"){
-            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
+            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+power_definitions.at(player.powers.basic)+" \n";
             lore+="You are Objectivity. You have transcended the opposing forces of light and darkness, standing beyond the endless struggle between them. Where others see good and evil, you see only what is, and your mind is untouched by the illusions and biases that cloud the judgment of ordinary beings. Ancient legends tell of those who achieve Objectivity becoming impartial arbiters of the world, able to perceive truths hidden from even the most powerful beings. You are not bound to light, nor are you consumed by darkness. You exist between them, observing the world with perfect clarity and wielding the power to determine its fate without being swayed by either side. The world may call you a savior, a monster, or something beyond either, but your judgment alone will decide what you become. \n";
-            lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+            lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+power_definitions.at(player.powers.cosmic)+" ";
     }
         else{
-            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
-            lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
+            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+power_definitions.at(player.powers.basic)+" \n";
+            lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+power_definitions.at(player.powers.alignment)+" \n";
             lore+="You are the Axiom. You possess a power that exists beyond space, beyond time, and beyond the limits of ordinary reality. While others manipulate the laws of the universe, you possess the ability to perceive and influence the fundamental principles upon which those laws are built. Ancient scholars believed that the Axiom was not merely a being who could control reality, but a living embodiment of the truths that govern existence itself. Space bends, time yields, and the impossible becomes possible in your presence. Yet such power comes with a terrifying realization: if the laws of reality can be changed, then nothing is truly permanent. You have been given the power to rewrite the rules by which the world exists, and whether you use that power to preserve creation, reshape it, or bring about something entirely new is a choice that only you can make. ";
         }
     }else if(player.rare_traits==2){
         if(player.powers.basic=="nexus"){
             if(player.powers.alignment=="objectivity"){
                 lore+="You are the Nexus of Objectivity. You command every elemental force while remaining untouched by the conflict between light and darkness. You see every element not as opposing forces, but as pieces of a greater whole, allowing you to wield them with unparalleled precision. Those who encounter you speak of a being who cannot be deceived by either side, for you understand the world without judgment and command its elements without limitation. You are not merely the master of the elements. You are the balance between them. \n";
-                lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.cosmic)+" ";
+                lore+="You have the power of "+player.powers.cosmic+". "+cosmic_power_upper+" is "+power_definitions.at(player.powers.cosmic)+" ";
             }else{
-                lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
+                lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+power_definitions.at(player.powers.alignment)+" \n";
                 lore+="You are the Nexus of Axiom. Every element answers to your will, but your power extends beyond the elements themselves. You perceive the fundamental rules that govern reality and possess the ability to bend them to your purpose. Fire, earth, water, metal, and every force between them become mere expressions of a deeper power that you alone can command. Legends once claimed that no being could master both the elements and the laws of existence, but you have proven those legends wrong. You do not merely control the world. You understand how it works. ";
             }
         }else{
-            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
+            lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+power_definitions.at(player.powers.basic)+" \n";
             lore+="You are the Axiom of Objectivity. You stand beyond the struggle between light and darkness and possess the ability to perceive reality exactly as it is. Your mind is untouched by illusion, bias, or deception, allowing you to comprehend truths that would shatter the minds of ordinary beings. Beyond this perfect perception lies an even greater power: the ability to influence the fundamental laws of reality itself. You do not choose between opposing forces, nor do you obey the rules that bind them. You simply observe the truth, understand it, and decide what the truth should become. ";
         }
     }else{lore+="Legend has it that one in a thousand people are born as the Absolute. You are one of them. You possess the power of the Nexus, the clarity of Objectivity, and the authority of the Axiom. Every element lies within your command, neither light nor darkness can sway your judgment, and the fundamental laws of reality are open to your understanding. You are not bound by the forces that govern ordinary beings because you stand above them, able to command the elements, perceive the truth, and reshape reality itself. Ancient civilizations could only speculate about such a being, believing that the convergence of these powers was impossible. Yet you exist, and the world now faces a question that has never had an answer: what does a being with no limits choose to do with them? ";}
@@ -226,7 +219,7 @@ bool battle_loop(bool turn,player& player,enemy& enemy){
     return !turn;
 }
 int main() {
-    load_moves();
+    load_jsons();
     cout<<"Welcome to the game! You are a player in a world of magic and adventure. You will be able to choose your character's stats and powers, and then embark on a journey to defeat the evil forces that threaten the land. \n";
     player player;
     cout<<player.name<<" has been created with the following stats: \n";
