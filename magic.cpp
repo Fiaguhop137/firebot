@@ -206,7 +206,15 @@ string get_lore(const player&player){
     }else{lore+="Legend has it that one in a thousand people are born as the Absolute. You are one of them. You possess the power of the Nexus, the clarity of Objectivity, and the authority of the Axiom. Every element lies within your command, neither light nor darkness can sway your judgment, and the fundamental laws of reality are open to your understanding. You are not bound by the forces that govern ordinary beings because you stand above them, able to command the elements, perceive the truth, and reshape reality itself. Ancient civilizations could only speculate about such a being, believing that the convergence of these powers was impossible. Yet you exist, and the world now faces a question that has never had an answer: what does a being with no limits choose to do with them? ";}
     return lore;
 }
-bool battle_loop(bool turn,player& player){
+void attack(player& attacker,enemy& attackee,string attacking_move){
+    attacker.cooldown_times[attacking_move]=MOVES.at(attacking_move).cooldown;
+    attackee.stats.health-=MOVES.at(attacking_move).damage*attacker.stats.attack/attackee.stats.defense;
+}
+void attack(enemy& attacker,player& attackee,string attacking_move){
+    attacker.cooldown_times[attacking_move]=MOVES.at(attacking_move).cooldown;
+    attackee.stats.health-=MOVES.at(attacking_move).damage*attacker.stats.attack/attackee.stats.defense;
+}
+bool battle_loop(bool turn,player& player,enemy& enemy){
     if(turn){
         string action="see moves";
         while(action=="see moves"){
@@ -222,7 +230,20 @@ bool battle_loop(bool turn,player& player){
                     cout<<MOVES.at(available_moves[i]).name<<": "<<MOVES.at(available_moves[i]).damage<<" damage, "<<cooldown<<" cooldown \n";
                 }
             }else{
-                //use moves
+                unordered_map<string,string> move_lookup;
+                for(const auto& move_id:available_moves){move_lookup[MOVES.at(move_id).name]=move_id;}
+                vector<string> available_move_names;
+                for(const auto& pair:move_lookup){available_move_names.push_back(pair.first);}
+                string move_to_use=user_input("What move would you like to use?",{available_move_names});
+                attack(player,enemy,move_lookup[move_to_use]);
+            }
+        }
+        for (auto it=player.cooldown_times.begin();it!=player.cooldown_times.end();){
+            it->second--;
+            if (it->second<=0) {
+                it=player.cooldown_times.erase(it);
+            }else{
+                ++it;
             }
         }
     }
@@ -260,6 +281,6 @@ int main() {
             }
         }
     }
-    battle_loop(true,player);
+    battle_loop(true,player,bob);
     return 0;
 }
