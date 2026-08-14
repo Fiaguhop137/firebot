@@ -5,6 +5,9 @@
 #include <algorithm>
 #include <random>
 #include <cctype>
+#include <fstream>
+#include <nlohmann/json.hpp>
+using json=nlohmann::json;
 using std::cin;
 using std::cout;
 using std::string;
@@ -33,7 +36,7 @@ struct move {
     string type;
     string level;
 };
-const unordered_map<string,move>MOVES={
+const unordered_map<string,move>moves={
     {"flame_burst",{"Flame Burst",10,1,"fire","basic"}},
     {"fireball",{"Fireball",13,2,"fire","basic"}},
     {"heat_wave",{"Heat Wave",17,2,"fire","basic"}},
@@ -165,11 +168,11 @@ struct player {
 string get_lore(const player&player){
     string lore="";
     string basic_power_upper=player.powers.basic;
-    basic_power_upper[0]=std::toupper(static_cast<unsigned char>(basic_power_upper[0]));
+    basic_power_upper[0]=std::toupper(basic_power_upper[0]);
     string alignment_power_upper=player.powers.alignment;
-    alignment_power_upper[0]=std::toupper(static_cast<unsigned char>(alignment_power_upper[0]));
+    alignment_power_upper[0]=std::toupper(alignment_power_upper[0]);
     string cosmic_power_upper=player.powers.cosmic;
-    cosmic_power_upper[0]=std::toupper(static_cast<unsigned char>(cosmic_power_upper[0]));
+    cosmic_power_upper[0]=std::toupper(cosmic_power_upper[0]);
     if(player.rare_traits==0){
         lore+="You have the power of "+player.powers.basic+". "+basic_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.basic)+" \n";
         lore+="You have the power of "+player.powers.alignment+". "+alignment_power_upper+" is "+POWER_DEFINITIONS.at(player.powers.alignment)+" \n";
@@ -207,12 +210,12 @@ string get_lore(const player&player){
     return lore;
 }
 void attack(player& attacker,enemy& attackee,string attacking_move){
-    attacker.cooldown_times[attacking_move]=MOVES.at(attacking_move).cooldown;
-    attackee.stats.health-=MOVES.at(attacking_move).damage*attacker.stats.attack/attackee.stats.defense;
+    attacker.cooldown_times[attacking_move]=moves.at(attacking_move).cooldown;
+    attackee.stats.health-=moves.at(attacking_move).damage*attacker.stats.attack/attackee.stats.defense;
 }
 void attack(enemy& attacker,player& attackee,string attacking_move){
-    attacker.cooldown_times[attacking_move]=MOVES.at(attacking_move).cooldown;
-    attackee.stats.health-=MOVES.at(attacking_move).damage*attacker.stats.attack/attackee.stats.defense;
+    attacker.cooldown_times[attacking_move]=moves.at(attacking_move).cooldown;
+    attackee.stats.health-=moves.at(attacking_move).damage*attacker.stats.attack/attackee.stats.defense;
 }
 bool battle_loop(bool turn,player& player,enemy& enemy){
     if(turn){
@@ -225,13 +228,13 @@ bool battle_loop(bool turn,player& player,enemy& enemy){
                 cout<<"You can use the following moves: \n";
                 for (size_t i=0;i<available_moves.size();++i){
                     string cooldown;
-                    if(MOVES.at(available_moves[i]).cooldown==1){cooldown="no";}
-                    else{cooldown=std::to_string(MOVES.at(available_moves[i]).cooldown-1)+"-turn";}
-                    cout<<MOVES.at(available_moves[i]).name<<": "<<MOVES.at(available_moves[i]).damage<<" damage, "<<cooldown<<" cooldown \n";
+                    if(moves.at(available_moves[i]).cooldown==1){cooldown="no";}
+                    else{cooldown=std::to_string(moves.at(available_moves[i]).cooldown-1)+"-turn";}
+                    cout<<moves.at(available_moves[i]).name<<": "<<moves.at(available_moves[i]).damage<<" damage, "<<cooldown<<" cooldown \n";
                 }
             }else{
                 unordered_map<string,string> move_lookup;
-                for(const auto& move_id:available_moves){move_lookup[MOVES.at(move_id).name]=move_id;}
+                for(const auto& move_id:available_moves){move_lookup[moves.at(move_id).name]=move_id;}
                 vector<string> available_move_names;
                 for(const auto& pair:move_lookup){available_move_names.push_back(pair.first);}
                 string move_to_use=user_input("What move would you like to use?",{available_move_names});
@@ -246,6 +249,8 @@ bool battle_loop(bool turn,player& player,enemy& enemy){
                 ++it;
             }
         }
+    }else{
+        //enemy logic or something idk
     }
     return !turn;
 }
@@ -267,7 +272,7 @@ int main() {
     std::uniform_int_distribution<size_t> cosmic_dist(0,COSMIC_POWERS.size()-1);
     bob.powers.cosmic=COSMIC_POWERS[cosmic_dist(gen)];
     std::bernoulli_distribution randbool(0.5);
-    for (const auto& [id,val]:MOVES) {
+    for (const auto& [id,val]:moves) {
         if(val.type==bob.powers.basic||val.type==bob.powers.alignment||val.type==bob.powers.cosmic){
             if(randbool(gen)){
                 bob.known_moves.push_back(id);
@@ -275,7 +280,7 @@ int main() {
         }
     }
     if(bob.known_moves.empty()){
-        for (const auto& [id,val]:MOVES) {
+        for (const auto& [id,val]:moves) {
             if(val.type==bob.powers.basic||val.type==bob.powers.alignment||val.type==bob.powers.cosmic){
                 bob.known_moves.push_back(id);
             }
