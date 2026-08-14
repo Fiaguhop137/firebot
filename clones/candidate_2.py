@@ -13,9 +13,9 @@ LEARNING_LOG = CLONES_DIR / "learning_log.jsonl"
 def build_variant(seed: int, score: int) -> str:
     template = SELF_PATH.read_text(encoding="utf-8")
     delta = seed + score
-    template = template.replace("SEED = 1", f"SEED = {seed}")
+    template = template.replace("SEED = 2", f"SEED = {seed}")
     template = template.replace("SCORE = 0", f"SCORE = {score}")
-    template = template.replace("DELTA = 1", f"DELTA = {delta}")
+    template = template.replace("DELTA = 2", f"DELTA = {delta}")
     return template
 
 
