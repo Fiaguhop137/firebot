@@ -18,7 +18,7 @@ std::mt19937 gen(rd());
 const vector<string> basic_powers={"fire","metal","wood","earth","water"};
 const vector<string> alignments={"light","dark"};
 const vector<string> cosmic_powers={"space","time"};
-const vector<string> stat_types={"attack", "defense", "speed", "health"};
+const vector<string> stat_types={"speed","attack","defense","health"};
 unordered_map<string,string>power_definitions;
 struct move {
     string name;
@@ -66,8 +66,8 @@ string user_input(string prompt,vector<string>valid_options={}) {
     }
 }
 struct stat_block {
-    int attack;
     int speed;
+    int attack;
     int defense;
     int health;
 };
@@ -110,11 +110,11 @@ struct player {
             powers.alignment=user_input("What would you like your character's alignment to be?",alignments);
             powers.cosmic=user_input("What would you like your character's cosmic power to be?",cosmic_powers);
         }
-        std::vector<std::string> basic_stater_moves={"flame_burst", "iron_spike", "splinter", "pebble_shot", "water_jet"};
+        std::vector<std::string> basic_starter_moves={"flame_burst", "iron_spike", "splinter", "pebble_shot", "water_jet"};
         auto basic_it=std::find(basic_powers.begin(),basic_powers.end(),powers.basic);
         size_t index=basic_it-basic_powers.begin();
-        if(index<basic_stater_moves.size()){known_moves.push_back(basic_stater_moves[index]);} 
-        else{known_moves.insert(known_moves.end(),basic_stater_moves.begin(),basic_stater_moves.end());}
+        if(index<basic_starter_moves.size()){known_moves.push_back(basic_starter_moves[index]);} 
+        else{known_moves.insert(known_moves.end(),basic_starter_moves.begin(),basic_starter_moves.end());}
         std::vector<std::string> alignment_starter_moves={"light_beam", "void_strike"};
         auto alignment_it=std::find(alignments.begin(),alignments.end(),powers.alignment);
         index=alignment_it-alignments.begin();
@@ -186,7 +186,7 @@ bool battle_loop(bool turn,player& player,enemy& enemy){
     if(turn){
         string action="see moves";
         while(action=="see moves"){
-            action=user_input(string("You have "+std::to_string(player.stats.attack)+" ATK, "+std::to_string(player.stats.speed)+" SPD, "+std::to_string(player.stats.defense)+" DFN, "+std::to_string(player.stats.health)+" HLT\nWhat would you like to do?"),{"use move", "see moves"});
+            action=user_input(string("You have "+std::to_string(player.stats.speed)+" SPD, "+std::to_string(player.stats.attack)+" ATK, "+std::to_string(player.stats.defense)+" DFN, "+std::to_string(player.stats.health)+" HLT\nWhat would you like to do?"),{"use move", "see moves"});
             vector<string> available_moves;
             for(size_t i=0;i<player.known_moves.size();++i){if (player.cooldown_times.find(player.known_moves[i])==player.cooldown_times.end()){available_moves.push_back(player.known_moves[i]);}}
             if(action=="see moves"){
