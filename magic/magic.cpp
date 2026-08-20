@@ -19,7 +19,6 @@ const vector<string> basic_powers={"fire","metal","wood","earth","water"};
 const vector<string> alignments={"light","dark"};
 const vector<string> cosmic_powers={"space","time"};
 const vector<string> stat_types={"speed","attack","defense","health"};
-unordered_map<string,string>power_definitions;
 struct move {
     string name;
     int damage;
@@ -28,6 +27,7 @@ struct move {
     string level;
 };
 unordered_map<string,move>moves;
+unordered_map<string,string>power_definitions;
 void load_jsons() {
     std::ifstream moves_file("assets/data/moves.json");
     json moves_data=json::parse(moves_file);

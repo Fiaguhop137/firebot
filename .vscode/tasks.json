@@ -21,9 +21,34 @@
             ],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             },
             "detail": "Build magic with g++"
+        },
+        {
+            "type": "cppbuild",
+            "label": "C: build bternary",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "-std=c17",
+                "-Wall",
+                "-Wextra",
+                "-pedantic",
+                "${workspaceFolder}/bternary.c",
+                "-o",
+                "${workspaceFolder}/bternary"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Build bternary with gcc"
         }
     ]
 }
