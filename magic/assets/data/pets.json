@@ -195,23 +195,23 @@
         "name": "Orbiton",
         "type": "space",
         "rarity": "uncommon",
-        "buffed_stat": 0,
+        "buffed_stat": 3,
         "move": "gravity_well",
         "description": "A floating pure black orb orbited by pebbles pulled from distant worlds."
     },
-    "wormwyrm": {
-        "name": "Wormwyrm",
+    "parsecwyrm": {
+        "name": "Parsecwyrm",
         "type": "space",
         "rarity": "rare",
         "buffed_stat": 0,
         "move": "space_wormhole",
-        "description": "A long, starlit wyrm that coils through wormholes between faraway places."
+        "description": "A starlit wyrm parsecs long that coils through wormholes between faraway places."
     },
     "singularis": {
         "name": "Singularis",
         "type": "space",
         "rarity": "epic",
-        "buffed_stat": 0,
+        "buffed_stat": 3,
         "move": "singularity",
         "description": "A dense, dark, winged creature with a tiny galaxy turning at its core."
     },
@@ -219,7 +219,7 @@
         "name": "Galaxar",
         "type": "space",
         "rarity": "legendary",
-        "buffed_stat": 0,
+        "buffed_stat": 2,
         "move": "galactic_strike",
         "description": "A cosmic dragon whose constellation-marked hide holds the light of vanished stars."
     },
@@ -235,7 +235,7 @@
         "name": "Chronohare",
         "type": "time",
         "rarity": "uncommon",
-        "buffed_stat": 0,
+        "buffed_stat": 2,
         "move": "temporal_loop",
         "description": "A long-eared runner that seems to arrive just before it starts moving."
     },
