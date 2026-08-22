@@ -6,7 +6,7 @@
 #include <random>
 #include <cctype>
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <json.hpp>
 using json=nlohmann::json;
 using std::cin;
 using std::cout;
