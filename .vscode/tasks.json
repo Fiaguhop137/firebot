@@ -3,30 +3,6 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++ build magic",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-std=c++17",
-                "-I",
-                "${workspaceFolder}/magic/assets",
-                "${workspaceFolder}/magic/magic.cpp",
-                "-o",
-                "${workspaceFolder}/magic/magic"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "detail": "Build magic with g++"
-        },
-        {
-            "type": "cppbuild",
             "label": "C: build bternary",
             "command": "/usr/bin/gcc",
             "args": [
