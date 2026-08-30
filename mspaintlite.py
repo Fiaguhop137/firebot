@@ -7,16 +7,16 @@ turtle.color("black")
 turtle.speed(0)
 turtle.hideturtle()
 turtle.penup()
-def mouse_down(event):turtle.pendown()
-def mouse_up(event):turtle.penup()
-def track_motion(event):
+def imnotafurry(event):turtle.pendown()
+def ilied_iAmAFurry(event):turtle.penup()
+def meow_nyah(event):
     #i hate how 0,0 is in th emiddel instead of top left cuz its so weird and my brain hurts
     x=event.x-screen.window_width()/2
     y=screen.window_height()/2-event.y
     #hashtag turtle is so annoying why did you pick this thing anyway
     turtle.goto(x,y)
-canvas=screen.getcanvas()
-canvas.bind('<Motion>',track_motion)
-canvas.bind('<Button-1>',mouse_down)
-canvas.bind('<ButtonRelease-1>',mouse_up)
+there_once_was_aShipAtSeaandthenameof_theShip_wasabillyoftea=screen.getcanvas()
+there_once_was_aShipAtSeaandthenameof_theShip_wasabillyoftea.bind('<Button-1>',imnotafurry)
+there_once_was_aShipAtSeaandthenameof_theShip_wasabillyoftea.bind('<ButtonRelease-1>',ilied_iAmAFurry)
+there_once_was_aShipAtSeaandthenameof_theShip_wasabillyoftea.bind('<Motion>',meow_nyah)
 screen.mainloop()
