@@ -22,4 +22,4 @@ else:
                 f.write(a.read())
         os.remove("tmp.bin")
     except FileNotFoundError:
-        print("You're an idiot and you didn't make a binary file yet. Run the program in write mode first.")
+        print("You ABSOLUTE IDIOT and you didn't make a binary file yet. Run the program in write mode first.")
