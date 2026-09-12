@@ -1,22 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     id="cityscape"
-     width="100vw"
-     height="100vh"
-     viewBox="0 0 600 600"
-     style="display:block; width:100vw; height:100vh; background:#050e39; cursor:pointer;"
-     tabindex="0">
-  <text id="browser-fallback"
-        x="50%"
-        y="50%"
-        text-anchor="middle"
-        dominant-baseline="middle"
-        fill="#ffaa00"
-        font-family="sans-serif"
-        font-size="24">
+<svg xmlns="http://www.w3.org/2000/svg" id="cityscape" width="100vw" height="100vh" viewBox="0 0 600 600" style="display:block;width:100vw;height:100vh;background:#050e39;cursor:pointer" tabindex="0"><text id="browser-fallback" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#fa0" font-family="sans-serif" font-size="24">
     please run on browser
-  </text>
-  <script type="text/javascript">
-    <![CDATA[
+  </text><script type="text/javascript"><![CDATA[
     const fallback=document.getElementById("browser-fallback");
     if(fallback){
       fallback.remove();
@@ -135,6 +119,4 @@
       }
     );
     makeCity();
-    ]]>
-  </script>
-</svg>
+    ]]></script></svg>
